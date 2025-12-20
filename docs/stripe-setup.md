@@ -106,8 +106,8 @@ Stripe 提供两种模式：
 4. 复制该 ID，稍后配置到环境变量中
 
 **示例**：
-- 按月订阅 Price ID：`price_1ABC123def456GHI789jkl`
-- 年度订阅 Price ID：`price_1XYZ789abc123DEF456ghi`
+- 按月订阅 Price ID：`price_xxx`
+- 年度订阅 Price ID：`price_yyy`
 
 ---
 
@@ -146,8 +146,8 @@ Stripe 提供两种模式：
 STRIPE_SECRET_KEY=sk_test_YOUR_SECRET_KEY_HERE
 
 # Stripe 价格 ID
-STRIPE_PRICE_ID_MONTHLY=price_1ABC123def456GHI789jkl
-STRIPE_PRICE_ID_YEARLY=price_1XYZ789abc123DEF456ghi
+STRIPE_PRICE_ID_MONTHLY=price_xxx
+STRIPE_PRICE_ID_YEARLY=price_yyy
 ```
 
 **替换说明**：
@@ -176,8 +176,8 @@ wrangler secret put STRIPE_PRICE_ID_YEARLY
 4. 进入 **Settings** > **Variables**
 5. 在 **Environment Variables** 部分添加：
    - `STRIPE_SECRET_KEY` = `sk_live_YOUR_SECRET_KEY_HERE`
-   - `STRIPE_PRICE_ID_MONTHLY` = `price_1ABC123def456GHI789jkl`
-   - `STRIPE_PRICE_ID_YEARLY` = `price_1XYZ789abc123DEF456ghi`
+   - `STRIPE_PRICE_ID_MONTHLY` = `price_xxx`
+   - `STRIPE_PRICE_ID_YEARLY` = `price_yyy`
 
 **重要提示**：
 - 本地开发使用测试密钥（`sk_test_`）
