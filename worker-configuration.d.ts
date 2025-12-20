@@ -5,4 +5,12 @@ interface Env {
 	STRIPE_SECRET_KEY?: string;
 	STRIPE_PRICE_ID_MONTHLY?: string;
 	STRIPE_PRICE_ID_YEARLY?: string;
+	// OAuth
+	GOOGLE_CLIENT_ID?: string;
+	GOOGLE_CLIENT_SECRET?: string;
+	GITHUB_CLIENT_ID?: string;
+	GITHUB_CLIENT_SECRET?: string;
+	SESSION_SECRET?: string;
+	NODE_ENV?: string;
+	APP_URL?: string;
 }

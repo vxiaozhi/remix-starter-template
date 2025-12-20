@@ -4,8 +4,11 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/cloudflare";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { getCurrentUser } from "~/utils/user.server";
+import type { User } from "~/utils/session.server";
 
 import "./tailwind.css";
 
@@ -40,6 +43,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	);
 }
 
+export const loader = async ({ request, context }: LoaderFunctionArgs) => {
+	const user = await getCurrentUser(request, context);
+	return { user };
+};
+
 export default function App() {
-	return <Outlet />;
+	const { user } = useLoaderData<typeof loader>();
+	return <Outlet context={{ user }} />;
 }

@@ -1,15 +1,23 @@
 import React from "react";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, Form, useOutletContext } from "@remix-run/react";
 import type { Language } from "~/utils/i18n";
 import { getTranslations } from "~/utils/i18n";
+import type { User } from "~/utils/session.server";
 
 interface NavigationProps {
 	lang: Language;
 	onLanguageChange: (lang: Language) => void;
+	user?: User | null;
 }
 
-export function Navigation({ lang, onLanguageChange }: NavigationProps) {
+interface AppContext {
+	user?: User | null;
+}
+
+export function Navigation({ lang, onLanguageChange, user: userProp }: NavigationProps) {
 	const location = useLocation();
+	const context = useOutletContext<AppContext>();
+	const user = userProp ?? context?.user;
 	const t = getTranslations(lang);
 
 	const isActive = (path: string) => {
@@ -45,28 +53,59 @@ export function Navigation({ lang, onLanguageChange }: NavigationProps) {
 						</NavLink>
 					</div>
 
-					{/* Language Switcher */}
+					{/* User Menu / Login */}
 					<div className="flex items-center space-x-2">
-						<button
-							onClick={() => onLanguageChange("zh")}
-							className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-								lang === "zh"
-									? "bg-pink-500 text-white"
-									: "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-							}`}
-						>
-							中文
-						</button>
-						<button
-							onClick={() => onLanguageChange("en")}
-							className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-								lang === "en"
-									? "bg-pink-500 text-white"
-									: "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-							}`}
-						>
-							English
-						</button>
+						{user ? (
+							<div className="flex items-center space-x-3">
+								{user.avatar && (
+									<img
+										src={user.avatar}
+										alt={user.name}
+										className="w-8 h-8 rounded-full"
+									/>
+								)}
+								<span className="hidden md:block text-sm text-gray-700 dark:text-gray-300">
+									{user.name}
+								</span>
+								<Form action="/auth/logout" method="post">
+									<button
+										type="submit"
+										className="px-3 py-1 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+									>
+										{t.nav.logout}
+									</button>
+								</Form>
+							</div>
+						) : (
+							<Link
+								to="/login"
+								className="px-4 py-2 rounded-md text-sm font-medium bg-pink-500 text-white hover:bg-pink-600 transition-colors"
+							>
+								{t.nav.login}
+							</Link>
+						)}
+						<div className="flex items-center space-x-1 ml-2 border-l border-gray-300 dark:border-gray-700 pl-2">
+							<button
+								onClick={() => onLanguageChange("zh")}
+								className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+									lang === "zh"
+										? "bg-pink-500 text-white"
+										: "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+								}`}
+							>
+								中文
+							</button>
+							<button
+								onClick={() => onLanguageChange("en")}
+								className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+									lang === "en"
+										? "bg-pink-500 text-white"
+										: "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+								}`}
+							>
+								English
+							</button>
+						</div>
 					</div>
 
 					{/* Mobile Menu Button */}
