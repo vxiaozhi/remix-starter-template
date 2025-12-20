@@ -1,5 +1,8 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useState, useEffect, useRef } from "react";
+import { Navigation } from "~/components/Navigation";
+import type { Language } from "~/utils/i18n";
+import { getTranslations, getDefaultName } from "~/utils/i18n";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -9,11 +12,17 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
+	const [lang, setLang] = useState<Language>(() => {
+		if (typeof window !== "undefined") {
+			return (localStorage.getItem("language") as Language) || "zh";
+		}
+		return "zh";
+	});
 	const [name, setName] = useState(() => {
 		if (typeof window !== "undefined") {
-			return localStorage.getItem("birthdayName") || "亲爱的";
+			return localStorage.getItem("birthdayName") || getDefaultName("zh");
 		}
-		return "亲爱的";
+		return getDefaultName("zh");
 	});
 	const [musicUrl, setMusicUrl] = useState(() => {
 		if (typeof window !== "undefined") {
@@ -25,11 +34,27 @@ export default function Index() {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const audioRef = useRef<HTMLAudioElement>(null);
 
+	const t = getTranslations(lang);
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			localStorage.setItem("language", lang);
+			// 如果name是默认值，根据语言更新
+			const savedName = localStorage.getItem("birthdayName");
+			if (!savedName || savedName === getDefaultName(lang === "zh" ? "en" : "zh")) {
+				setName(getDefaultName(lang));
+			}
+		}
+	}, [lang]);
+
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			const savedName = localStorage.getItem("birthdayName");
 			const savedMusic = localStorage.getItem("birthdayMusic");
+			const savedLang = localStorage.getItem("language") as Language;
+			if (savedLang) setLang(savedLang);
 			if (savedName) setName(savedName);
+			else setName(getDefaultName(savedLang || lang));
 			if (savedMusic) setMusicUrl(savedMusic);
 		}
 	}, []);
@@ -69,6 +94,9 @@ export default function Index() {
 
 	return (
 		<div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-pink-100 via-purple-100 to-pink-200 dark:from-pink-900 dark:via-purple-900 dark:to-pink-800">
+			{/* 导航菜单 */}
+			<Navigation lang={lang} onLanguageChange={setLang} />
+
 			{/* 背景装饰 */}
 			<div className="absolute inset-0 overflow-hidden">
 				<div className="absolute top-10 left-10 w-20 h-20 bg-yellow-300 rounded-full opacity-30 animate-bounce" style={{ animationDelay: "0s", animationDuration: "3s" }}></div>
@@ -80,8 +108,8 @@ export default function Index() {
 			{/* 设置按钮 */}
 			<button
 				onClick={() => setShowSettings(!showSettings)}
-				className="fixed top-4 right-4 z-50 p-3 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all"
-				aria-label="设置"
+				className="fixed top-20 right-4 z-50 p-3 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all"
+				aria-label={t.birthday.settings}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -109,40 +137,40 @@ export default function Index() {
 			{showSettings && (
 				<div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
 					<div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl max-w-md w-full mx-4">
-						<h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">设置</h2>
+						<h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">{t.birthday.settings}</h2>
 						<div className="space-y-4">
 							<div>
 								<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-									姓名
+									{t.birthday.name}
 								</label>
 								<input
 									type="text"
 									value={name}
 									onChange={(e) => handleNameChange(e.target.value)}
 									className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-500"
-									placeholder="请输入姓名"
+									placeholder={t.birthday.namePlaceholder}
 								/>
 							</div>
 							<div>
 								<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-									背景音乐URL
+									{t.birthday.musicUrl}
 								</label>
 								<input
 									type="text"
 									value={musicUrl}
 									onChange={(e) => handleMusicChange(e.target.value)}
 									className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-500"
-									placeholder="请输入音乐文件URL或路径"
+									placeholder={t.birthday.musicUrlPlaceholder}
 								/>
 								<p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-									支持本地文件路径（如 /music.mp3）或在线URL
+									{t.birthday.musicUrlHint}
 								</p>
 							</div>
 							<button
 								onClick={() => setShowSettings(false)}
 								className="w-full py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg font-medium transition-colors"
 							>
-								完成
+								{t.birthday.done}
 							</button>
 						</div>
 					</div>
@@ -150,12 +178,12 @@ export default function Index() {
 			)}
 
 			{/* 主内容 */}
-			<div className="relative z-10 flex flex-col items-center justify-center min-h-screen py-12 px-4">
+			<div className="relative z-10 flex flex-col items-center justify-center min-h-screen py-12 px-4 pt-24">
 				{/* 滚动字幕 */}
 				<div className="w-full max-w-4xl mb-8 overflow-hidden">
 					<div className="marquee-container">
 						<div className="marquee-text">
-							祝 {name} 生日快乐 🎂 祝 {name} 生日快乐 🎂 祝 {name} 生日快乐 🎂 祝 {name} 生日快乐 🎂
+							{t.birthday.marquee.replace("{name}", name)} {t.birthday.marquee.replace("{name}", name)} {t.birthday.marquee.replace("{name}", name)} {t.birthday.marquee.replace("{name}", name)}
 						</div>
 					</div>
 				</div>
@@ -168,10 +196,10 @@ export default function Index() {
 				{/* 祝福文字 */}
 				<div className="text-center space-y-4">
 					<h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 animate-pulse">
-						生日快乐！
+						{t.birthday.greeting}
 					</h1>
 					<p className="text-2xl md:text-3xl text-gray-700 dark:text-gray-200 font-medium">
-						愿你的每一天都充满阳光和快乐 ✨
+						{t.birthday.wish}
 					</p>
 				</div>
 
@@ -202,7 +230,7 @@ export default function Index() {
 								</svg>
 							)}
 							<span className="text-gray-700 dark:text-gray-200 font-medium">
-								{isPlaying ? "暂停" : "播放"}
+								{isPlaying ? t.birthday.pause : t.birthday.play}
 							</span>
 						</button>
 					</div>
@@ -219,7 +247,7 @@ export default function Index() {
 					>
 						<source src={musicUrl} type="audio/mpeg" />
 						<source src={musicUrl} type="audio/ogg" />
-						您的浏览器不支持音频播放。
+						{t.birthday.audioNotSupported}
 					</audio>
 				)}
 			</div>

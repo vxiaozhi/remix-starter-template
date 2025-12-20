@@ -2,4 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface,@typescript-eslint/no-empty-object-type
 interface Env {
+	STRIPE_SECRET_KEY?: string;
+	STRIPE_PRICE_ID_MONTHLY?: string;
+	STRIPE_PRICE_ID_YEARLY?: string;
 }

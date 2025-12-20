@@ -1,0 +1,121 @@
+export type Language = "zh" | "en";
+
+export const translations = {
+	zh: {
+		nav: {
+			home: "主页",
+			about: "关于",
+			help: "帮助",
+			pricing: "价格",
+		},
+		birthday: {
+			title: "生日快乐 🎂",
+			description: "温馨的生日祝福页面",
+			marquee: "祝 {name} 生日快乐 🎂",
+			greeting: "生日快乐！",
+			wish: "愿你的每一天都充满阳光和快乐 ✨",
+			settings: "设置",
+			name: "姓名",
+			namePlaceholder: "请输入姓名",
+			musicUrl: "背景音乐URL",
+			musicUrlPlaceholder: "请输入音乐文件URL或路径",
+			musicUrlHint: "支持本地文件路径（如 /music.mp3）或在线URL",
+			done: "完成",
+			play: "播放",
+			pause: "暂停",
+			audioNotSupported: "您的浏览器不支持音频播放。",
+		},
+		about: {
+			title: "关于我们",
+			description: "了解我们的生日祝福平台",
+			content: "这是一个温馨的生日祝福平台，为您和您的爱人创造美好的回忆。",
+		},
+		help: {
+			title: "帮助",
+			description: "使用帮助和常见问题",
+			content: "这里是帮助内容，您可以找到使用说明和常见问题解答。",
+		},
+		pricing: {
+			title: "价格",
+			description: "查看我们的价格方案",
+			content: "选择适合您的订阅方案",
+			monthly: "按月订阅",
+			yearly: "年度订阅",
+			monthlyPrice: "¥99",
+			yearlyPrice: "¥999",
+			perMonth: "/月",
+			perYear: "/年",
+			monthlyDesc: "按月付费，灵活方便",
+			yearlyDesc: "年度订阅，更优惠",
+			yearlySave: "节省 17%",
+			subscribe: "立即订阅",
+			features: "功能特性",
+			feature1: "无限使用",
+			feature2: "优先支持",
+			feature3: "高级功能",
+		},
+	},
+	en: {
+		nav: {
+			home: "Home",
+			about: "About",
+			help: "Help",
+			pricing: "Pricing",
+		},
+		birthday: {
+			title: "Happy Birthday 🎂",
+			description: "A warm birthday blessing page",
+			marquee: "Happy Birthday {name} 🎂",
+			greeting: "Happy Birthday!",
+			wish: "May every day be filled with sunshine and happiness ✨",
+			settings: "Settings",
+			name: "Name",
+			namePlaceholder: "Please enter name",
+			musicUrl: "Background Music URL",
+			musicUrlPlaceholder: "Please enter music file URL or path",
+			musicUrlHint: "Supports local file paths (e.g., /music.mp3) or online URLs",
+			done: "Done",
+			play: "Play",
+			pause: "Pause",
+			audioNotSupported: "Your browser does not support audio playback.",
+		},
+		about: {
+			title: "About Us",
+			description: "Learn about our birthday blessing platform",
+			content: "This is a warm birthday blessing platform that creates beautiful memories for you and your loved ones.",
+		},
+		help: {
+			title: "Help",
+			description: "Usage help and frequently asked questions",
+			content: "Here is the help content where you can find usage instructions and FAQ.",
+		},
+		pricing: {
+			title: "Pricing",
+			description: "View our pricing plans",
+			content: "Choose the subscription plan that works for you",
+			monthly: "Monthly",
+			yearly: "Yearly",
+			monthlyPrice: "$9.99",
+			yearlyPrice: "$99.99",
+			perMonth: "/month",
+			perYear: "/year",
+			monthlyDesc: "Pay monthly, flexible and convenient",
+			yearlyDesc: "Annual subscription, more savings",
+			yearlySave: "Save 17%",
+			subscribe: "Subscribe Now",
+			features: "Features",
+			feature1: "Unlimited usage",
+			feature2: "Priority support",
+			feature3: "Advanced features",
+		},
+	},
+} as const;
+
+export function getTranslations(lang: Language) {
+	return translations[lang];
+}
+
+export function getDefaultName(lang: Language): string {
+	return lang === "zh" ? "亲爱的" : "Dear";
+}
+
